@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RSVP | The CULT</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+
+</head>
+
+
+<body>
+
+
+<nav>
+
+    <div class="logo">
+        The CULT
+    </div>
+
+    <a href="events.html">
+        ← Back to Events
+    </a>
+
+</nav>
+
+
+
+<section class="join-page">
+
+
+    <div class="form-wrapper">
+
+
+        <!-- RSVP FORM -->
+
+        <div id="formContent">
+
+            <span class="pill">
+                RSVP
+            </span>
+
+
+            <h1>
+                You're coming?
+            </h1>
+
+
+            <p class="intro">
+                We'd love to see you. Let us know you're planning
+                to join us so we know who's coming.
+            </p>
+
+
+
+            <form id="rsvpForm">
+
+
+                <label>
+                    Name
+
+                    <input
+                        type="text"
+                        name="name"
+                        required>
+                </label>
+
+
+
+                <label>
+                    Email
+
+                    <input
+                        type="email"
+                        name="email"
+                        required>
+                </label>
+
+
+
+                <label>
+                    Phone Number (optional)
+
+                    <input
+                        type="tel"
+                        name="phone">
+                </label>
+
+
+
+                <label>
+                    Which event are you attending?
+
+                    <select
+                        name="event"
+                        id="eventSelect"
+                        required>
+
+                        <option value="">
+                            Select an event
+                        </option>
+
+                        <option value="Beach Day">
+                            Beach Day
+                        </option>
+
+                        <option value="Seed Exchange and Germination Day">
+                            Seed Exchange & Germination Day
+                        </option>
+
+                        <option value="Planting Day">
+                            Planting Day
+                        </option>
+
+                        <option value="Nokomis Drum Circle Meetup">
+                            Nokomis Drum Circle Meetup
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+                </label>
+
+
+
+                <label>
+                    How many people are coming?
+
+                    <select
+                        name="guests"
+                        required>
+
+                        <option value="">
+                            Select number
+                        </option>
+
+                        <option value="1">
+                            Just me
+                        </option>
+
+                        <option value="2">
+                            2 people
+                        </option>
+
+                        <option value="3">
+                            3 people
+                        </option>
+
+                        <option value="4">
+                            4 people
+                        </option>
+
+                        <option value="5+">
+                            5+ people
+                        </option>
+
+                    </select>
+                </label>
+
+
+
+                <label>
+                    Anything we should know?
+
+                    <span class="hint">
+                        Optional
+                    </span>
+
+                    <textarea
+                        name="notes"
+                        rows="5"
+                        placeholder="Anything you'd like us to know..."></textarea>
+
+                </label>
+
+
+
+                <button type="submit">
+                    RSVP →
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- SUCCESS MESSAGE -->
+
+        <div id="success" class="success">
+
+            <span class="pill">
+                You're On The List
+            </span>
+
+
+            <h2>
+                See you there!
+            </h2>
+
+
+            <p>
+                Thanks for letting us know you're coming.
+                We're looking forward to seeing you!
+            </p>
+
+
+            <a href="events.html" class="primary">
+                Back to Events
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<script>
+
+const form = document.getElementById("rsvpForm");
+
+const formContent = document.getElementById("formContent");
+
+const success = document.getElementById("success");
+
+const submitButton = form.querySelector("button");
+
+const eventSelect = document.getElementById("eventSelect");
+
+
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbzr3BlcrkJrR7q7jP1UI4AgeP4bnwer6RtQhXsGBo0fV1mKnEUW-RZW5eFJOhIvipbI/exec";
+
+
+
+/* ---------------------------------
+   PRE-SELECT EVENT
+---------------------------------- */
+
+const params = new URLSearchParams(window.location.search);
+
+const selectedEvent = params.get("event");
+
+
+if (selectedEvent) {
+
+    const matchingOption = Array.from(eventSelect.options).find(
+        option => option.value === selectedEvent
+    );
+
+    if (matchingOption) {
+        eventSelect.value = selectedEvent;
+    }
+
+}
+
+
+
+/* ---------------------------------
+   SUBMIT FORM
+---------------------------------- */
+
+form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+
+    submitButton.disabled = true;
+
+    submitButton.textContent = "Sending...";
+
+
+    const formData = new FormData(form);
+
+
+    try {
+
+        await fetch(scriptURL, {
+            method: "POST",
+            body: formData,
+            mode: "no-cors"
+        });
+
+
+        /*
+         * Google has already been tested successfully,
+         * so after the request completes we can show
+         * the CULT confirmation screen.
+         */
+
+        formContent.style.display = "none";
+
+        success.style.display = "block";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        submitButton.disabled = false;
+
+        submitButton.textContent = "RSVP →";
+
+        alert(
+            "We couldn't send your RSVP. Please try again."
+        );
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>
